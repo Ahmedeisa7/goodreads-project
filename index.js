@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const { connect } = require('http2');
 const app = express();
 const categoryRouter = require('./routes/category');
+const ratingRouter = require('./routes/rating');
 const { connected } = require('process');
 app.use(express.json());
 const PORT = 55000;
@@ -11,6 +12,7 @@ const PORT = 55000;
 
 
 app.use('/category', categoryRouter);
+app.use('/books/:id/rating', ratingRouter);
 
 
 
