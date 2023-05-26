@@ -1,26 +1,36 @@
 const express = require('express');
+require('dotenv').config();
 const mongoose = require('mongoose');
-const { connect } = require('http2');
 const app = express();
-const categoryRouter = require('./routes/category');
-const { connected } = require('process');
 app.use(express.json());
-const PORT = 55000;
+const PORT = process.env.PORT;
+const URL_DB = process.env.URL_DB;
 
 
 
-
+// Category Route
+const categoryRouter = require('./routes/category');
 app.use('/category', categoryRouter);
 
+// User Route
+const userRouter = require('./routes/users.js');
+app.use('/users', userRouter);
 
-
-
-
-
-
-
-mongoose.connect("mongodb://127.0.1:27017/goodReadss",{useNewUrlParser:true,useUnifiedTopology:true}).then(()=>console.log("Db connected")
-).catch((err)=>(console.log(err)));
+// Connect TO DB
+mongoose.connect(URL_DB,
+    {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+        useFindAndModify: false,
+        useCreateIndex: true,
+    }, 
+    (err) => {
+    if(!err) {
+        console.log("DB Connected");
+    } else {
+        console.log('faild to connect');
+    }
+    });
 
 app.listen(PORT,(err)=>{
     if(!err) return console.log(`you are listening on ${PORT}`);
