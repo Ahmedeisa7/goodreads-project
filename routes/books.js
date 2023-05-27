@@ -1,8 +1,8 @@
 const express = require('express');
 const books = require('../model/books');
-const booksRouter = express.Router();
+const router = express.Router();
 
-booksRouter.post('/', expressAsyncHandler(async (res, res) => {
+router.post('/', async (req, res) => {
     const createBooks = await books.create(req.body);
     if (createBooks) {
         res.status(200);
@@ -12,6 +12,6 @@ booksRouter.post('/', expressAsyncHandler(async (res, res) => {
         res.status(500);
         throw new Error("Can't create a new book.")
     }
-}))
+})
 
-module.exports = booksRouter;
+module.exports = router;
