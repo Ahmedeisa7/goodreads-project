@@ -11,7 +11,10 @@ const URL_DB = process.env.URL_DB;
 // Category Route
 const categoryRouter = require('./routes/category');
 app.use('/category', categoryRouter);
+
+const ratingRouter = require('./routes/rating');
 app.use('/books/:id/rating', ratingRouter);
+
 
 // User Route
 const userRouter = require('./routes/users.js');

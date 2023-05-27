@@ -48,4 +48,22 @@ booksRouter.put('/:id', expressAsyncHandler(async(req, res) => {
 )
 
 
-module.exports = booksRouter;
+router.get("/:id", (req, res) => {
+    const { id } = req.params;
+    if(!ObjectID.isValid(id)){
+        res.status(400).json({
+            Error: 'Id Is Not Valid in DB'
+        })
+    }
+    else {
+        UserModel.findById(id, (err, userData) => {
+            if (!err) {
+                return res.json(userData);
+            } else {
+                return res.status(500).json({ Error: "DB_ERROR" });
+            }
+        });
+    }
+});
+
+module.exports = booksRouter
