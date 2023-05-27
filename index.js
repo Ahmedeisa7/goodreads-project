@@ -9,8 +9,8 @@ const ratingRouter = require('./routes/rating');
 
 
 // Category Route
-const categoryRouter = require('./routes/category');
 app.use('/category', categoryRouter);
+// rating Route
 app.use('/books/:id/rating', ratingRouter);
 
 // user route
