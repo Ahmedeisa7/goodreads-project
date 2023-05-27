@@ -12,6 +12,6 @@ router.post('/', async (req, res) => {
         res.status(500);
         throw new Error("Can't create a new book.")
     }
-}))
+})
 
 module.exports = router;
