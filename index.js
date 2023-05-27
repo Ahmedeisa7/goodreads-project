@@ -5,20 +5,32 @@ const app = express();
 app.use(express.json());
 const PORT = process.env.PORT;
 const URL_DB = process.env.URL_DB;
-
+const ratingRouter = require('./routes/rating');
 
 
 // Category Route
-const categoryRouter = require('./routes/category');
 app.use('/category', categoryRouter);
-
-const ratingRouter = require('./routes/rating');
+// rating Route
 app.use('/books/:id/rating', ratingRouter);
 
-
-// User Route
+// user route
 const userRouter = require('./routes/users.js');
 app.use('/users', userRouter);
+// register route
+const registerRouter = require('./routes/register.js');
+app.use('/register', registerRouter);
+// // login route
+const loginRouter = require('./routes/login.js');
+app.use('/login', loginRouter);
+
+// welcome after auth
+const auth = require('./middleware/auth.js');
+app.post('/welcome', auth, (req, res) => {
+    res.send("Welcome ");
+});
+// category route
+const catRoute = require('./routes/category.js');
+app.use('/category', catRoute)
 
 // Connect TO DB
 mongoose.connect(URL_DB,

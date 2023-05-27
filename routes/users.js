@@ -1,10 +1,11 @@
 const express = require("express");
 const router = express.Router();
 const UserModel = require("../model/users.js");
+const cloudinary = require('../middleware/cloudinary.js');
 const upload = require("../middleware/upload.js");
 const ObjectID = require('mongoose').Types.ObjectId;
 const bcrypt = require('bcryptjs');
-const mongoose = require('mongoose')
+
 
 // Get All Data From DB
 router.get("/", (req, res) => {
@@ -36,67 +37,55 @@ router.get("/:id", (req, res) => {
     }
 });
 
+
 // Update By Id
-router.patch("/:id", upload('user').single('image') , async (req, res) => {
-    const { id } = req.params;
-try {
-
-        const user = await UserModel.findById(id);
-
-        if(!user) {
-            console.log("User Is Not Found !!");
-        } else {
-
-            const UserImage = user.image;
-            
-            if (req.file && req.file.name != "user.jpg") {
-                
-                const imagePath = path.join(__dirname, "../assets/uploads/user", user.image);
-                
-                fs.unlinkSync(imagePath); 
-                user.image = req.file.filename;
+router.patch("/:id", upload("users").single('image') , async (req, res) => {
+    try {
+            const { id } = req.params;
+            let user = await UserModel.findById(id);
+            if(!user) {
+                return res.status(404).send("User Not Found")
             }
-            encryptedPassword = await bcrypt.hash(req.body.password, 10);
-            user.f_name = req.body.f_name;
-            user.l_name = req.body.l_name;
-            user.password = encryptedPassword;
-            user.email = req.body.email;
-            
-            await user.save();
-            res.send("Update User Successfuly")
-            
-            if (req.file && req.file.name != "user.jpg" && user.image !== req.file.filename) {
-                
-                const imagePath = path.join(__dirname, "../assets/uploads/user", user.image);
-                
-                fs.unlinkSync(imagePath); 
-                
-                user.image = UserImage;
-                await user.save();
-                console.log("image revert");
+            if(req.file) {
+                const result = await cloudinary.uploader.upload(req.file.path);
+                await cloudinary.uploader.destroy(user.publicID);
+                const image = {
+                    imageUrl: result.secure_url || user.imageUrl,
+                    publicID: result.public_id || user.publicID
+                }
+                user = await UserModel.findByIdAndUpdate(id, image, {new: true});
             }
-        }
-    } catch(err) {
-        if (err instanceof mongoose.Error.ValidationError) {
-                console.log("Validation error:", err.errors);
-                res.status(400).send(err.errors);
-            } else {
-                console.log("Error saving user object:", err);
-                res.status(500).send("Internal server error");
+            const data = {
+                f_name: req.body.f_name || user.f_name,
+                l_name: req.body.l_name || user.l_name,
+                password: await bcrypt.hash(req.body.password, 10) || user.password,
+                email: req.body.email || user.email
             }
-    }
+            user = await UserModel.findByIdAndUpdate(id, data, {new: true});
+            res.status(200).send("update Successfully!");
+            
+        } catch(err) {
+            console.log(err);
+            res.status(500).send('server' + err)
+            }
 });
 
 // // Delete By ID1
-router.delete("/:id", (req, res) => {
-    const { id } = req.params;
-        UserModel.findByIdAndDelete(id, (err, data) => {
-        if (!err) {
-            return res.status(200).json(`Deleted One Record ===> ${data}`);
-        } else {
-            return res.status(500).json({ Erorr: "DB_ERROR" });
-        }
-    });
+router.delete("/:id", async (req, res) => {
+    try {
+            const { id } = req.params;
+            
+            let user = await UserModel.findById(id);
+        
+            await cloudinary.uploader.destroy(user.publicID);
+            
+            await user.remove()
+
+            res.status(200).json(`Deleted One Record`);
+        } catch (err) {
+            console.log(err);
+            res.status(500).json({ Erorr: "DB_ERROR" });
+    }
 });
 
 module.exports = router;
