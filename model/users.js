@@ -23,9 +23,6 @@ const usersSchema = new mongoose.Schema({
     unique: true,
     match: /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/
   },
-  image: {
-    type: 'string'
-  },
   imageUrl: {
     type: 'string'
   },
