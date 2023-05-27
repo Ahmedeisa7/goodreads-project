@@ -49,7 +49,7 @@ router.post("/", upload("users").single("image"), async (req, res) => {
             // save user token
             user.token = token;
             // return new user
-            return res.status(201).json(user);
+            // return res.status(201).json(user);
 
         } catch (err) {
             res.status(400).send(err.message);

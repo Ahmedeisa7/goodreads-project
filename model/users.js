@@ -26,6 +26,12 @@ const usersSchema = new mongoose.Schema({
   image: {
     type: 'string'
   },
+  imageUrl: {
+    type: 'string'
+  },
+  publicID: {
+    type: 'string'
+  },
   isAdmin: {
     type: Boolean, default: false
   },
