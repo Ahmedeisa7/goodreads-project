@@ -1,4 +1,4 @@
-const authorModel = require('../models/author');
+const authorModel = require('../model/author');
 const upload = require('../helpers/upload');
 const dotenv = require('dotenv').config()
 const authorData = require('../helpers/authorData');

@@ -20,7 +20,7 @@ const authorSchema = new mongoose.Schema({
     },
     photo: {
         type: String
-    },
+    }
 });
 
 const authorModel = mongoose.model('author', authorSchema)
