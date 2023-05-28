@@ -1,3 +1,4 @@
+const cors = require("cors");
 const express = require('express');
 require('dotenv').config();
 const mongoose = require('mongoose');
@@ -11,7 +12,9 @@ const registerRouter = require('./routes/register.js');
 const loginRouter = require('./routes/login.js');
 const auth = require('./middleware/auth.js');
 const categoryRouter = require('./routes/category');
+const booksRouter = require('./routes/books')
 
+app.use(cors())
 
 // Category Route
 app.use('/category', categoryRouter);
@@ -27,7 +30,7 @@ app.use('/login', loginRouter);
 app.post('/welcome', auth, (req, res) => {
     res.send("Welcome ");
 });
-
+app.use('/books', booksRouter)
 
 
 // Connect TO DB

@@ -1,6 +1,7 @@
 const express = require('express');
 const books = require('../model/books');
 const router = express.Router();
+// const adminAuth = require('../middleware/adminAuth');
 
 router.post('/', async (req, res) => {
     const createBooks = await books.create(req.body);
@@ -13,6 +14,18 @@ router.post('/', async (req, res) => {
         throw new Error("Can't create a new book.")
     }
 })
+
+router.get("/", (req, res) => {
+    books.find({}, (err, booksData) => {
+    if (!err) {
+            return res.status(200).json(booksData);
+        } else {
+            return res.status(500).json({ Error: "DB_ERROR" });
+        }
+    });
+});
+
+
 
 router.get("/:id", (req, res) => {
     const { id } = req.params;
@@ -32,4 +45,4 @@ router.get("/:id", (req, res) => {
     }
 });
 
-module.exports = booksRouter
+module.exports = router
