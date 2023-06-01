@@ -9,6 +9,7 @@ const ratingRouter = require('./routes/rating');
 const userRouter = require('./routes/users.js');
 const registerRouter = require('./routes/register.js');
 const loginRouter = require('./routes/login.js');
+const angRateRouter = require('./routes/avgRate');
 const auth = require('./middleware/auth.js');
 const categoryRouter = require('./routes/category');
 const authorRouter = require('./routes/author');
@@ -19,13 +20,15 @@ const authorRouter = require('./routes/author');
 // Category Route
 app.use('/category', categoryRouter);
 // rating Route
-app.use('/books/:id/rating', ratingRouter);
+app.use('/rating', ratingRouter);
 // user route
 app.use('/users', userRouter);
 // register route
 app.use('/register', registerRouter);
 // // login route
 app.use('/login', loginRouter);
+// // avgrate route
+app.use('/avgRate', angRateRouter);
 // welcome after auth
 app.post('/welcome', auth, (req, res) => {
     res.send("Welcome ");
