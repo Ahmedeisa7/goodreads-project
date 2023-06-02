@@ -13,10 +13,11 @@ const angRateRouter = require('./routes/avgRate');
 const auth = require('./middleware/auth.js');
 const categoryRouter = require('./routes/category');
 const authorRouter = require('./routes/author');
+const cors = require('cors');
 
 
 
-
+app.use(cors());
 // Category Route
 app.use('/category', categoryRouter);
 // rating Route
