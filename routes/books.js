@@ -41,7 +41,7 @@ router.get("/", (req, res) => {
     });
 });
 
-router.get("/:id", (req, res) => {
+router.get("/:id",async (req, res) => {
     const { id } = req.params;
     if(!ObjectID.isValid(id)){
         res.status(400).json({
