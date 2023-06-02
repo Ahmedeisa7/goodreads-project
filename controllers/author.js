@@ -14,7 +14,7 @@ function addAuthor(req, res) {
                 photo: req.file.filename,
             });
             newAuthor.save()
-            res.status(201).send(newAuthor);
+            res.status(201).send(authorData(newAuthor));
         }
 
         else {
