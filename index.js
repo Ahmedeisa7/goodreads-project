@@ -6,6 +6,8 @@ const app = express();
 app.use(express.json());
 const PORT = process.env.PORT;
 const URL_DB = process.env.URL_DB;
+
+// Import Files
 const ratingRouter = require('./routes/rating');
 const userRouter = require('./routes/users.js');
 const registerRouter = require('./routes/register.js');
@@ -13,6 +15,9 @@ const loginRouter = require('./routes/login.js');
 const auth = require('./middleware/auth.js');
 const categoryRouter = require('./routes/category');
 const booksRouter = require('./routes/books')
+const authorRouter = require('./routes/author');
+
+
 
 app.use(cors())
 
@@ -31,25 +36,31 @@ app.post('/welcome', auth, (req, res) => {
     res.send("Welcome ");
 });
 app.use('/books', booksRouter)
+app.use('/author', authorRouter);
+
+
+app.use("/images", express.static(__dirname + '/storage'));
+
 
 
 // Connect TO DB
+mongoose.set('strictQuery', true);
 mongoose.connect(URL_DB,
     {
         useNewUrlParser: true,
         useUnifiedTopology: true,
         useFindAndModify: false,
         useCreateIndex: true,
-    }, 
+    },
     (err) => {
-    if(!err) {
-        console.log("DB Connected");
-    } else {
-        console.log('faild to connect');
-    }
+        if (!err) {
+            console.log("DB Connected");
+        } else {
+            console.log('faild to connect');
+        }
     });
 
-app.listen(PORT,(err)=>{
-    if(!err) return console.log(`you are listening on ${PORT}`);
+app.listen(PORT, (err) => {
+    if (!err) return console.log(`you are listening on ${PORT}`);
     console.log(err);
 });
