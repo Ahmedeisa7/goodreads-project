@@ -1,98 +1,110 @@
 const express = require('express');
 const books = require('../model/books');
-const ObjectID=require('mongoose').Types.Objectid;
+const cloudinary = require('../middleware/cloudinary.js');
+const upload = require("../middleware/upload.js");
+const ObjectID = require('mongoose').Types.ObjectId;
 const router = express.Router();
+// const adminAuth = require('../middleware/adminAuth');
 
-router.get('/',async (req,res)=>{
-try {
-    const getAllBooks = await books.find()
-    res.status(201).json(getAllBooks)
-} catch (error) {
-    res.status(500).json({ error: 'Internal Server Error' });
+router.post('/', upload("books").single("image"),async (req, res) => {
+
+    try {
+        const {title, authorID, categoryID, description} = req.body;
+
+        if (!(title && authorID, categoryID, description)) {
+            return res.status(400).send("All input is required");
+        }
+
+        const result = await cloudinary.uploader.upload(req.file.path, {folder: "books"});
+        const book = await books.create({
+            title,
+            authorID,
+            categoryID,
+            description,
+            imageUrl: result.secure_url,
+            publicID: result.public_id
+        })
+
+        return res.status(201).json(book);
+}   catch(err) {
+    res.status(401).send("somthing not correct");
 }
-})
+});
 
-router.post('/', async (req, res) => {
-    const createBooks = await books.create(req.body);
-    if (createBooks) {
-        res.status(200);
-        res.json(createBooks)
-    }
-    else {
-        res.status(500);
-        throw new Error("Can't create a new book.")
-    }
-})
+router.get("/", (req, res) => {
+    books.find({}, (err, booksData) => {
+    if (!err) {
+            return res.status(200).json(booksData);
+        } else {
+            return res.status(500).json({ Error: "DB_ERROR" });
+        }
+    });
+});
 
 router.get("/:id",async (req, res) => {
     const { id } = req.params;
-    try {
-        const {id}=req.params
-        const getBooks=  await books.findById({_id :id})
-        res.status(200).json(getBooks)
-    } catch (error) {
-        res.status(500).json(error)
-    }
-});
-
-router.put('/:id', async(req,res)=>{
-
-    // const { id } = req.params;
-    // const updateBook = await UserModel.findByIdAndUpdate(id, {
-    //   title: req.body.title,
-    //   authors: req.body.authors,
-    //   category: req.body.category,
-    //   description: req.body.description,
-    //   publication_date: req.body.publication_date,
-    //   image_url: req.body.image_url,
-    //   book_url: req.body.book_url,
-    //   average_rating: req.body.average_rating,
-    //   ratings_count: req.body.ratings_count,
-    //   reviews_count: req.body.reviews_count,
-    // }, { new: true });
-    
-    // if (!updateBook) {
-    //   return res.status(404).json({ error: 'Book not found' });
-    // }
-    
-    // // The updated book document will be available in the 'updateBook' variable
-    // res.json({ message: 'Book updated successfully', book: updateBook });
-    
-
-
-
-
-
-    try {
-        const{id} = req.params;
-        const updataBook= await books.updateOne({_id:id}, {
-            title: req.body.title,
-            authors: req.body.authors,
-            category: req.body.category,
-            description: req.body.description,
-            publication_date: req.body.publication_date,
-            image_url: req.body.image_url,
-            book_url: req.body.book_url,
-            average_rating: req.body.average_rating,
-            ratings_count: req.body.ratings_count,
-            reviews_count:req.body.reviews_count,
-
+    if(!ObjectID.isValid(id)){
+        res.status(400).json({
+            Error: 'Id Is Not Valid in DB'
         })
-        res.status(201).json(req.body);
-    } catch (error) {
-        res.status(500).json({ error: 'Internal Server Error' });
     }
-   
+    else {
+        books.findById(id, (err, bookData) => {
+            if (!err) {
+                return res.json(bookData);
+            } else {
+                return res.status(500).json({ Error: "DB_ERROR" });
+            }
+        });
+    }
 });
-router.delete('/:id',async (req,res)=>{
+
+router.put("/:id", upload("books").single('image') , async (req, res) => {
     try {
-        const {id}=req.params;
-        const deleteBook = await UserModel.deleteOne({_id:id});
-        res.status(201).json('deleted book successfully')
-    } catch (error) {
-        res.status(500).json({ error: 'Internal Server Error' });
+            const { id } = req.params;
+            let book = await books.findById(id);
+            if(!book) {
+                return res.status(404).send("Book Not Found")
+            }
+            if(req.file){
+                await cloudinary.uploader.destroy(book.publicID);
+                const result = await cloudinary.uploader.upload(req.file.path);
+                const image = {
+                    imageUrl: result.secure_url || book.imageUrl,
+                    publicID: result.public_id || book.publicID
+                }
+                book = await books.findByIdAndUpdate(id, image, {new: true});
+            }
+            const data = {
+                title: req.body.title,
+                authorID: req.body.authorID,
+                categoryID: req.body.categoryID,
+                description: req.description
+            }
+            book = await books.findByIdAndUpdate(id, data, {new: true});
+            res.status(200).json({ message: 'Book updated successfully' });
+        } catch(err) {
+                console.log(err);
+                res.status(500).json({ message: 'server ' + err })
+            }
+});
+
+router.delete("/:id", async (req, res) => {
+    try {
+            const { id } = req.params;
+            
+            let book = await books.findById(id);
+        
+            await cloudinary.uploader.destroy(book.publicID);
+            
+            await book.remove()
+
+            res.status(200).json(`Deleted One Record`);
+        } catch (err) {
+            console.log(err);
+            res.status(500).json({ Erorr: "DB_ERROR" });
     }
-})
+});
 
 
 module.exports = router

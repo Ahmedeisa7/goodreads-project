@@ -6,39 +6,53 @@ const booksSchema = new mongoose.Schema({
         type: String,
         required: [true, 'Book title is required']
     },
-    authors: [{
-        type: String,
-        required: [true, 'Author name is requried']
-    }],
-    category: [{
-        type: String,
-        required: [true, 'Book category is required']
-    }],
+    authorID: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: [true, 'Author name is requried'],
+        ref: "author"
+    },
+    categoryID: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: [true, 'Book category is required'],
+        ref: 'Category'
+    },
     description: {
         type: String,
         required: [true, 'Book description is requried']
     },
     publication_date: {
-        type: Date,
-        required: [true, 'Book publication date is requried']
+        type: Date
     },
-    image_url: {
-        type:String
+    imageUrl: {
+        type: 'string'
     },
-    book_url: {
-        type:String
+    publicID: {
+    type: 'string'
     },
     average_rating: {
-        type: Number
+        type: 'string'
     },
     ratings_count: {
-        type: Number
+        type: "string"
     },
     reviews_count: {
-        type: Number
+        type: "string"
     }
 
 });
+
+booksSchema.pre(/^find/,function(next){
+    this.populate({
+        path:'authorID',
+        select:'firstName'
+    }).populate({
+        path:'categoryID',
+        select:'name'
+    })
+    next();
+})
+
+
 
 const books = mongoose.model('books', booksSchema);
 module.exports = books

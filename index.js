@@ -1,3 +1,4 @@
+const cors = require("cors");
 const express = require('express');
 require('dotenv').config();
 const mongoose = require('mongoose');
@@ -5,6 +6,8 @@ const app = express();
 app.use(express.json());
 const PORT = process.env.PORT;
 const URL_DB = process.env.URL_DB;
+
+// Import Files
 const ratingRouter = require('./routes/rating');
 const userRouter = require('./routes/users.js');
 const registerRouter = require('./routes/register.js');
@@ -12,12 +15,13 @@ const loginRouter = require('./routes/login.js');
 const angRateRouter = require('./routes/avgRate');
 const auth = require('./middleware/auth.js');
 const categoryRouter = require('./routes/category');
+const booksRouter = require('./routes/books')
 const authorRouter = require('./routes/author');
-const cors = require('cors');
 
 
 
-app.use(cors());
+app.use(cors())
+
 // Category Route
 app.use('/category', categoryRouter);
 // rating Route
@@ -34,6 +38,7 @@ app.use('/avgRate', angRateRouter);
 app.post('/welcome', auth, (req, res) => {
     res.send("Welcome ");
 });
+app.use('/books', booksRouter)
 app.use('/author', authorRouter);
 
 
