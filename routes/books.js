@@ -9,9 +9,9 @@ const router = express.Router();
 router.post('/', upload("books").single("image"),async (req, res) => {
 
     try {
-        const {title, authorID, categoryID, description} = req.body;
+        const {title, authorID, categoryID} = req.body;
 
-        if (!(title && authorID, categoryID, description)) {
+        if (!(title && authorID, categoryID)) {
             return res.status(400).send("All input is required");
         }
 
@@ -20,7 +20,6 @@ router.post('/', upload("books").single("image"),async (req, res) => {
             title,
             authorID,
             categoryID,
-            description,
             imageUrl: result.secure_url,
             publicID: result.public_id
         })
@@ -78,8 +77,7 @@ router.put("/:id", upload("books").single('image') , async (req, res) => {
             const data = {
                 title: req.body.title,
                 authorID: req.body.authorID,
-                categoryID: req.body.categoryID,
-                description: req.description
+                categoryID: req.body.categoryID
             }
             book = await books.findByIdAndUpdate(id, data, {new: true});
             res.status(200).json({ message: 'Book updated successfully' });

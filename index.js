@@ -41,10 +41,7 @@ app.post('/welcome', auth, (req, res) => {
 app.use('/books', booksRouter)
 app.use('/author', authorRouter);
 
-
 app.use("/images", express.static(__dirname + '/storage'));
-
-
 
 // Connect TO DB
 mongoose.set('strictQuery', true);

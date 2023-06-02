@@ -16,10 +16,9 @@ const booksSchema = new mongoose.Schema({
         required: [true, 'Book category is required'],
         ref: 'Category'
     },
-    description: {
-        type: String,
-        required: [true, 'Book description is requried']
-    },
+    
+    description: {type: String},
+
     publication_date: {
         type: Date
     },

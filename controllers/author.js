@@ -10,8 +10,8 @@ function addAuthor(req, res) {
             const newAuthor = new authorModel({
                 firstName: req.body.firstName,
                 lastName: req.body.lastName,
-                dateOfBirth: req.body.dateOfBirth
-                // photo: req.file.filename,
+                dateOfBirth: req.body.dateOfBirth,
+                photo: req.file.filename
             });
             newAuthor.save()
             res.status(201).send(newAuthor);
