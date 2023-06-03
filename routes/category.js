@@ -23,17 +23,20 @@ router.get('/:id',async(req,res)=>{
   
 });
 
-router.post('/',async(req,res) => {
+router.post('/', async (req, res) => {
     try {
-       
-        const createCategory = await category.create({...req.body})
-        res.status(201).json("add category successfully")
-    } catch (error) {
-        res.status(500).json({error})
-    }
+            const createCategory = new category({
+                name: req.body.name
+            })
+            const categoryNew = await createCategory.save()
+            res.status(201).json({messag: "add category successfully"})
+            console.log(categoryNew);
+        } catch (error) {
+            res.status(500).json({error})
+        }
 })
 
-router.put('/:id',async(req,res)=>{
+router.put('/:id', async (req, res) => {
     try {
         const {id}= req.params
         const editCategory = await category.updateOne({_id:id },{ name:req.body.name})

@@ -3,9 +3,9 @@ const mongoose = require('mongoose');
 // Define the category schema
 const categorySchema = new mongoose.Schema({
 
-name:{   type: String, 
-unique: [true, 'Please enter unique name for your category'], 
-required: [true, 'Please enter name for your category'] }
+name: { type: String, 
+        unique: true, 
+        required: true }
 })
 
 // Create the Category model

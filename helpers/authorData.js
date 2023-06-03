@@ -8,7 +8,7 @@ function authorData(author) {
         firstName: author?.firstName,
         lastName: author?.lastName,
         dateOfBirth: author?.dateOfBirth,
-        photo: dotenv.parsed.APP_URL + "4000/images/author-photos/" + author?.photo
+        photo: dotenv.parsed.APP_URL + dotenv.parsed.PORT + "/images/author-photos/" + author?.photo
     }
 }
 

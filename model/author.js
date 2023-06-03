@@ -15,7 +15,7 @@ const authorSchema = new mongoose.Schema({
     },
 
     dateOfBirth: {
-        type: Date,
+        type: String,
         required: [true, 'This Field Is Required']
     },
     photo: {

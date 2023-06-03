@@ -11,10 +11,10 @@ function addAuthor(req, res) {
                 firstName: req.body.firstName,
                 lastName: req.body.lastName,
                 dateOfBirth: req.body.dateOfBirth,
-                photo: req.file.filename
+                photo: req.file.filename,
             });
             newAuthor.save()
-            res.status(201).send(newAuthor);
+            res.status(201).send(authorData(newAuthor));
         }
 
         else {
@@ -53,7 +53,7 @@ function listAuthorById(req, res) {
 
 function updateAuthor(req, res) {
 
-    upload(req, res, (uploadErr) => {
+        upload(req, res, (uploadErr) => {
         const update = {
             firstName: req.body.firstName,
             lastName: req.body.lastName,
@@ -75,8 +75,8 @@ function updateAuthor(req, res) {
 
 function deleteAuthor(req, res) {
     authorModel.findByIdAndDelete(req.params.id, err => {
-        if (!err) return res.status(201).send('Author Deleted Successfully');
-        res.status(500).send('An Error Occured: Could Not Delete Author')
+        if (!err) return res.status(201).json({message: 'Author Deleted Successfully'});
+        res.status(500).json({message: 'An Error Occured: Could Not Delete Author'})
     })
 }
 

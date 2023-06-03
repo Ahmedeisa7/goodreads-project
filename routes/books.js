@@ -6,20 +6,21 @@ const ObjectID = require('mongoose').Types.ObjectId;
 const router = express.Router();
 // const adminAuth = require('../middleware/adminAuth');
 
-router.post('/', upload("books").single("image"),async (req, res) => {
+router.post('/', upload("books").single("image"), async (req, res) => {
 
     try {
         const {title, authorID, categoryID} = req.body;
-
+        console.log(req.body);
+        console.log(req.file);
         if (!(title && authorID, categoryID)) {
             return res.status(400).send("All input is required");
         }
 
         const result = await cloudinary.uploader.upload(req.file.path, {folder: "books"});
         const book = await books.create({
-            title,
-            authorID,
-            categoryID,
+            title: req.body.title,
+            authorID: req.body.autherID,
+            categoryID: req.body.categoryID,
             imageUrl: result.secure_url,
             publicID: result.public_id
         })
